@@ -8,20 +8,10 @@ pipeline {
                 sh 'sudo docker tag ${JOB_NAME}:v1.${BUILD_NUMBER} dianahalaby/${JOB_NAME}:latest'               
             }
         }
-        stage('run') {
-            steps {
-                sh 'docker run --name app -p 80:80 -d dianahalaby/${JOB_NAME}:v1.${BUILD_NUMBER}'
-            }
-        }
-        stage('test') {
-            steps {
-                sh 'curl 18.209.22.221:80'
-            }
-        }
         stage('Push docker image') {
             steps {
-                withCredentials([string(credentialsId:'dockerhubpwd', variable:'dockerhubpwd')]) {
-                    sh 'sudo docker plugin -u dianahalaby -p ${dockerhubpwd}'
+                withCredentials([string(credentialsId:'dockerhub', variable:'dockerhub')]){
+                sh 'sudo docker plugin -u dianahalaby -p ${dockerhub}'
                 }
                 sh 'sudo docker push dianahalaby/${JOB_NAME}:v1.${BUILD_NUMBER}'
                 sh 'sudo docker push dianahalaby/${JOB_NAME}:latest'
